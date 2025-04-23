@@ -16,5 +16,7 @@
         <property name="hibernate.format_sql">true</property>
 
         <mapping class="com.hackmech.model.User"/>
+        <mapping class="com.hackmech.model.Room"/>
+        <mapping class="com.hackmech.model.Equipment"/>
     </session-factory>
 </hibernate-configuration>

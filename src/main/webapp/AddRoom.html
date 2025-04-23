@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Add/Update Room</title>
+    <style>
+        body {
+          font-family: 'Segoe UI', sans-serif;
+          margin: 0;
+          padding: 0;
+          background: #f4f7fa;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          height: 100vh;
+          animation: fadeIn 1s ease-in;
+        }
+
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+
+        .container {
+          background: #ffffff;
+          padding: 2rem 3rem;
+          border-radius: 20px;
+          box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+          max-width: 500px;
+          width: 100%;
+          animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+          from { transform: translateY(40px); opacity: 0; }
+          to { transform: translateY(0); opacity: 1; }
+        }
+
+        h2 {
+          margin-bottom: 1rem;
+          text-align: center;
+          color: #333;
+        }
+
+        label {
+          display: block;
+          margin-top: 1rem;
+          color: #444;
+        }
+
+        input[type="text"], input[type="number"] {
+          width: 100%;
+          padding: 0.7rem;
+          margin-top: 0.4rem;
+          border: 1px solid #ccc;
+          border-radius: 10px;
+          transition: border 0.3s;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus {
+          border-color: #4a90e2;
+          outline: none;
+        }
+
+        .equipment-box {
+          margin-top: 1rem;
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 0.5rem;
+        }
+
+        .equipment-box label {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          font-size: 0.9rem;
+          cursor: pointer;
+        }
+
+        .actions {
+          margin-top: 2rem;
+          text-align: center;
+        }
+
+        button {
+          background-color: #4a90e2;
+          color: white;
+          padding: 0.8rem 2rem;
+          border: none;
+          border-radius: 50px;
+          font-weight: bold;
+          cursor: pointer;
+          transition: background 0.3s;
+        }
+
+        button:hover {
+          background-color: #357ab8;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Add or Update Room</h2>
+    <form action="/admin/room" method="post">
+
+        <!-- Only add this field when updating -->
+        <!-- <input type="hidden" name="roomId" value="123" /> -->
+
+        <label for="name">Room Name</label>
+        <input type="text" id="name" name="name" required />
+
+        <label for="location">Location</label>
+        <input type="text" id="location" name="location" required />
+
+        <label for="capacity">Capacity</label>
+        <input type="number" id="capacity" name="capacity" min="1" required />
+
+        <label>Equipment</label>
+        <div class="equipment-box">
+            <label><input type="checkbox" name="equipment" value="1" /> Whiteboard</label>
+            <label><input type="checkbox" name="equipment" value="2" /> Digital Screen</label>
+            <label><input type="checkbox" name="equipment" value="3" /> Projector</label>
+            <label><input type="checkbox" name="equipment" value="4" /> Conference Speaker</label>
+            <label><input type="checkbox" name="equipment" value="5" /> AC</label>
+        </div>
+
+        <div class="actions">
+            <button type="submit">Save Room</button>
+        </div>
+    </form>
+</div>
+
+</body>
+</html>
