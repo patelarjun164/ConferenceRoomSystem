@@ -15,8 +15,8 @@ public class Equipment {
     @Column(nullable = false, unique = true)
     private String name;
 
-    @ManyToMany(mappedBy = "equipment")
-    private Set<Room> rooms = new HashSet<>();
+    @ManyToMany(mappedBy = "equipment", fetch = FetchType.EAGER)
+    private transient Set<Room> rooms = new HashSet<>();
 
     // Constructors
     public Equipment() {}

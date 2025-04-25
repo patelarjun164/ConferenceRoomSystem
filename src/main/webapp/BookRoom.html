@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Book a Room</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f4f6f8;
+            padding: 2rem;
+            max-width: 600px;
+            margin: auto;
+        }
+        h2 {
+            color: #333;
+            text-align: center;
+        }
+        form {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+        }
+        label {
+            display: block;
+            margin-top: 1rem;
+            font-weight: 600;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 0.6rem;
+            margin-top: 0.4rem;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+        button {
+            margin-top: 1.5rem;
+            padding: 0.8rem;
+            width: 100%;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+<h2>Book a Conference Room</h2>
+<form action="/protected/book-room" method="POST">
+    <label for="roomId">Select Room</label>
+    <select name="roomId" id="roomId" required>
+        <!-- Options will be populated by JavaScript -->
+        <option value="1">Matoshri</option>
+        <option value="2">FC 17</option>
+    </select>
+
+    <label for="startTime">Start Time</label>
+    <input type="datetime-local" name="startTime" id="startTime" required>
+
+    <label for="endTime">End Time</label>
+    <input type="datetime-local" name="endTime" id="endTime" required>
+
+    <label for="purpose">Purpose</label>
+    <textarea name="purpose" id="purpose" rows="3" placeholder="Meeting agenda or purpose" required></textarea>
+
+    <button type="submit">Book Room</button>
+</form>
+
+<script>
+    // Ensure the DOM is loaded before fetch
+    document.addEventListener("DOMContentLoaded", function () {
+        const select = document.getElementById("roomId");
+
+        fetch('/rooms')
+            .then(response => {
+                if (!response.ok) throw new Error("Failed to fetch rooms");
+                return response.json();
+            })
+            .then(data => {
+                // Clear default options
+                select.innerHTML = '';
+
+                data.forEach(room => {
+                    const option = document.createElement("option");
+                    option.value = room.id;
+                    option.text = `${room.name} (Capacity: ${room.capacity})`;
+                    select.appendChild(option);
+                });
+            })
+            .catch(error => {
+                console.error("Error loading rooms:", error);
+            });
+    });
+</script>
+
+</body>
+</html>

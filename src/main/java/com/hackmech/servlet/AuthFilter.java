@@ -20,10 +20,11 @@ public class AuthFilter implements Filter {
         if (session == null || session.getAttribute("user") == null) {
 //            res.sendRedirect(req.getContextPath() + "/login.html");
             System.out.println("redirect to login");
-            res.getWriter().write("success");
+            res.getWriter().write("user not found");
+            res.sendRedirect("/Login.html");
         } else {
             System.out.println("valid user");
-            res.getWriter().write("valid user");
+//            res.getWriter().write("valid user");
             chain.doFilter(request, response);
         }
     }
