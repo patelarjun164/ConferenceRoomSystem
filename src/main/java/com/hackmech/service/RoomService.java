@@ -18,8 +18,10 @@ public class RoomService {
         if (equipmentIds != null) {
             for (String eqIdStr : equipmentIds) {
                 int eqId = Integer.parseInt(eqIdStr);
+                System.out.println(eqId);
                 Equipment equipment = equipmentDao.getById(eqId);
                 if (equipment != null) {
+                    System.out.println(equipment.getName() + " added!");
                     equipmentSet.add(equipment);
                 }
             }

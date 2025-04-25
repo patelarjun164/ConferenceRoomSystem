@@ -41,6 +41,7 @@ public class LoginServlet extends HttpServlet {
                 httpSession.setAttribute("user", user);
                 httpSession.setAttribute("role", user.getRole());
                 System.out.println("login success");
+                resp.sendRedirect("/UserBookings.html");
                 resp.getWriter().write("success");
             } else {
                 System.out.println("invalid username or password");
@@ -51,5 +52,6 @@ public class LoginServlet extends HttpServlet {
             resp.getWriter().write("exception");
         }
     }
+
 }
 

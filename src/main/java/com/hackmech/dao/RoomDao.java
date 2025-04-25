@@ -62,8 +62,12 @@ public class RoomDao {
             List<Room> rooms = session.createNativeQuery(sql, Room.class).list();
 
             // Manually initialize the lazy collection
+//            for (Room room : rooms) {
+//                Hibernate.initialize(room.getEquipment());
+//            }
+            System.out.println("into Room DAo getAllrooms sql");
             for (Room room : rooms) {
-                Hibernate.initialize(room.getEquipment());
+                System.out.println(room.getName());
             }
 
             session.close();

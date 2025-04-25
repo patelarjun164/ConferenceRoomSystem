@@ -21,12 +21,12 @@ public class RoomManagementServlet extends HttpServlet {
             throws ServletException, IOException {
 
         HttpSession session = request.getSession(false);
-        if (session == null || !"ADMIN".equals(session.getAttribute("role"))) {
-            System.out.println("User is NOT ADMIN");
-            response.getWriter().write("not admin!!");
-            response.sendError(HttpServletResponse.SC_FORBIDDEN);
-            return;
-        }
+//        if (session == null || !"ADMIN".equals(session.getAttribute("role"))) {
+//            System.out.println("User is NOT ADMIN");
+//            response.getWriter().write("not admin!!");
+////            response.sendError(HttpServletResponse.SC_FORBIDDEN);
+//            return;
+//        }
 
         try {
             String name = request.getParameter("name");
@@ -37,13 +37,19 @@ public class RoomManagementServlet extends HttpServlet {
             Room room;
             String roomIdStr = request.getParameter("roomId");
 
+            System.out.println(name);
+            System.out.println(location);
+            System.out.println(capacity);
+            System.out.println(equipmentIds);
+            System.out.println(roomIdStr);
+
             if (roomIdStr != null && !roomIdStr.isEmpty()) {
                 int roomId = Integer.parseInt(roomIdStr);
                 room = roomService.getRoomById(roomId);
                 if (room == null) {
                     System.out.println("room not found!");
                     response.getWriter().write("room not found!");
-                    response.sendError(HttpServletResponse.SC_NOT_FOUND);
+//                    response.sendError(HttpServletResponse.SC_NOT_FOUND);
                     return;
                 }
             } else {

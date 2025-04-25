@@ -18,5 +18,6 @@
         <mapping class="com.hackmech.model.User"/>
         <mapping class="com.hackmech.model.Room"/>
         <mapping class="com.hackmech.model.Equipment"/>
+        <mapping class="com.hackmech.model.Booking"/>
     </session-factory>
 </hibernate-configuration>

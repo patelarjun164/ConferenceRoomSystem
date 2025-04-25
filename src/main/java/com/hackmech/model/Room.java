@@ -19,7 +19,7 @@ public class Room {
 
     private int capacity;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "room_equipment",
             joinColumns = @JoinColumn(name = "room_id"),
