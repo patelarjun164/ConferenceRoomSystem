@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Update Booking</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+        body {
+          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+          background-color: #f0f2f5;
+          margin: 0;
+          padding: 1rem;
+        }
+
+        h1, h2 {
+          text-align: center;
+          color: #333;
+        }
+
+        .container {
+          max-width: 1200px;
+          margin: 2rem auto;
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+          gap: 1.5rem;
+        }
+
+        .card {
+          background-color: #fff;
+          border-radius: 12px;
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+          padding: 1.5rem;
+          cursor: pointer;
+          transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+          transform: scale(1.02);
+        }
+
+        .card p {
+          margin: 0.3rem 0;
+        }
+
+        .equipment-list {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 8px;
+          margin: 10px 0;
+        }
+
+        .equipment-item {
+          background-color: #e0e0e0;
+          border-radius: 12px;
+          padding: 5px 10px;
+          font-size: 0.85rem;
+        }
+
+        .form-section {
+          max-width: 600px;
+          margin: 3rem auto;
+          background-color: #fff;
+          padding: 2rem;
+          border-radius: 12px;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        label {
+          font-weight: 500;
+          display: block;
+          margin-top: 1rem;
+        }
+
+        input, textarea {
+          width: 100%;
+          padding: 10px;
+          margin-top: 5px;
+          font-size: 1rem;
+          border-radius: 8px;
+          border: 1px solid #ccc;
+        }
+
+        input[disabled], textarea[disabled] {
+          background-color: #f1f1f1;
+        }
+
+        button {
+          margin-top: 1.5rem;
+          width: 100%;
+          padding: 12px;
+          background-color: #007bff;
+          border: none;
+          border-radius: 8px;
+          color: #fff;
+          font-size: 1rem;
+          cursor: pointer;
+        }
+
+        button:hover {
+          background-color: #0056b3;
+        }
+
+        #responseMessage {
+          text-align: center;
+          margin-top: 1rem;
+          font-weight: bold;
+        }
+
+        @media (max-width: 600px) {
+          .container {
+            grid-template-columns: 1fr;
+          }
+        }
+    </style>
+</head>
+<body>
+
+<h1>Your Bookings</h1>
+<div class="container" id="bookingsContainer"></div>
+
+<h2 id="form-section">Update Booking</h2>
+<div class="form-section">
+    <form id="updateForm">
+        <input type="hidden" name="bookingId" id="bookingId" />
+
+        <label>Room</label>
+        <input type="text" id="roomName" disabled />
+
+        <label>Location</label>
+        <input type="text" id="roomLocation" disabled />
+
+        <label>Capacity</label>
+        <input type="text" id="roomCapacity" disabled />
+
+        <label>Start Time</label>
+        <input type="datetime-local" id="startTime" name="startTime" required />
+
+        <label>End Time</label>
+        <input type="datetime-local" id="endTime" name="endTime" required />
+
+        <label>Purpose</label>
+        <textarea id="purpose" name="purpose" rows="3" required></textarea>
+
+        <button type="submit">Update Booking</button>
+    </form>
+    <div id="responseMessage"></div>
+</div>
+
+<script>
+    async function fetchBookings() {
+      try {
+        const response = await fetch("/protected/user/bookings");
+
+        if (response.status === 401) {
+          // User not authorized
+          document.getElementById("bookingsContainer").innerHTML = `
+            <p style="text-align:center; font-weight:bold; font-size:1.2rem; color:red;">
+              You are not logged in. Please <a href="/Login.html">login here</a>.
+            </p>`;
+
+          // Hide form and form heading
+          document.querySelector(".form-section").style.display = "none";
+          document.getElementById("form-section").style.display = "none";
+          return;
+        }
+
+        const bookings = await response.json();
+        const container = document.getElementById("bookingsContainer");
+        container.innerHTML = '';
+
+        bookings.forEach(booking => {
+          const room = booking.room;
+          const card = document.createElement("div");
+          card.className = "card";
+
+          card.innerHTML = `
+            <h3>Room: ${room.name}</h3>
+            <p><strong>Location:</strong> ${room.location}</p>
+            <p><strong>Capacity:</strong> ${room.capacity}</p>
+            <div class="equipment-list">
+              ${room.equipment.map(eq => `<div class="equipment-item">${eq.name}</div>`).join('')}
+            </div>
+            <p><strong>Start:</strong> ${new Date(booking.startTime).toLocaleString()}</p>
+            <p><strong>End:</strong> ${new Date(booking.endTime).toLocaleString()}</p>
+            <p><strong>Purpose:</strong> ${booking.purpose}</p>
+          `;
+
+          card.onclick = () => {
+            document.getElementById("bookingId").value = booking.id;
+            document.getElementById("roomName").value = room.name;
+            document.getElementById("roomLocation").value = room.location;
+            document.getElementById("roomCapacity").value = room.capacity;
+            document.getElementById("startTime").value = booking.startTime.slice(0, 16);
+            document.getElementById("endTime").value = booking.endTime.slice(0, 16);
+            document.getElementById("purpose").value = booking.purpose;
+
+            window.location.hash = "#form-section";
+          };
+
+          container.appendChild(card);
+        });
+
+      } catch (error) {
+        console.error("Could not load bookings", error);
+        document.getElementById("bookingsContainer").innerHTML = "<p>Failed to load bookings. Try again later.</p>";
+      }
+    }
+
+    document.getElementById("updateForm").addEventListener("submit", async function (e) {
+      e.preventDefault();
+      const formData = new URLSearchParams(new FormData(this));
+
+      try {
+        const response = await fetch("/protected/update/book", {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: formData
+        });
+
+        const result = await response.text();
+        const msgDiv = document.getElementById("responseMessage");
+
+        if (response.ok) {
+          msgDiv.textContent = result;
+          msgDiv.style.color = "green";
+          setTimeout(() => {
+            window.location.href = "/UserBookings.html";
+          }, 2000);
+        } else {
+          msgDiv.textContent = result;
+          msgDiv.style.color = "red";
+        }
+      } catch (error) {
+        console.error("Error:", error);
+        document.getElementById("responseMessage").textContent = "An error occurred.";
+        document.getElementById("responseMessage").style.color = "red";
+      }
+    });
+
+    fetchBookings();
+</script>
+</body>
+</html>

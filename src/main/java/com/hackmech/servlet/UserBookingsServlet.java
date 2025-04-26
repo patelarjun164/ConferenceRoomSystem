@@ -38,14 +38,14 @@ public class UserBookingsServlet extends HttpServlet {
         List<Booking> bookings = bookingService.getBookingsByUser(userId);
 
         System.out.println("frombooking servlet ids");
-        for (Booking bk : bookings) {
-            System.out.print(bk.getId());
-        }
+//        for (Booking bk : bookings) {
+//            System.out.print(bk.getId());
+//        }
 
         resp.setContentType("application/json");
         resp.setCharacterEncoding("UTF-8");
 
-        System.out.println("Before JSon");
+//        System.out.println("Before JSon");
         String json = null;
         try {
             Gson gson = new GsonBuilder()

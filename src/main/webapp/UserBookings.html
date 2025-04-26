@@ -110,6 +110,7 @@
         } catch (error) {
             console.error("Could not load bookings", error);
             document.getElementById("bookingsContainer").innerHTML = "<p>Failed to load bookings. Try again later.</p>";
+            document.getElementById("card").innerHTML = "<p>Seems You are not LoggedIn Yet!!!</p>";
         }
     }
 

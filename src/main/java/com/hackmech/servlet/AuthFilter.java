@@ -8,7 +8,7 @@ import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 
-@WebFilter("/protected/*") // Or whatever your secure path is
+@WebFilter("/protected/*")
 public class AuthFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response,
@@ -18,15 +18,12 @@ public class AuthFilter implements Filter {
 
         HttpSession session = req.getSession(false);
         if (session == null || session.getAttribute("user") == null) {
-//            res.sendRedirect(req.getContextPath() + "/login.html");
-            System.out.println("redirect to login");
-            res.getWriter().write("user not found");
-            res.sendRedirect("/Login.html");
+            System.out.println("User not found, sending unauthorized response.");
+            res.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // Send 401 status
+            res.getWriter().write("unauthorized"); // Send text response
         } else {
-            System.out.println("valid user");
-//            res.getWriter().write("valid user");
+            System.out.println("Valid user, continuing request.");
             chain.doFilter(request, response);
         }
     }
 }
-

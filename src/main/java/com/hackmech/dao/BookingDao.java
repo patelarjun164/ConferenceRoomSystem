@@ -41,11 +41,47 @@ public class BookingDao {
             String sql = "SELECT * FROM Booking WHERE user_id = ?";
             Query<Booking> query = session.createNativeQuery(sql, Booking.class);
             query.setParameter(1, userId);
-            List<Booking> bks = query.getResultList();
-            for (Booking bk : bks){
-                System.out.println(bk.getId());
+            return query.getResultList();
+//            for (Booking bk : bks){
+//                System.out.println(bk.getId());
+//            }
+//            return bks;
+        }
+    }
+
+    public boolean updateBooking(Booking booking) {
+        Transaction tx = null;
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            tx = session.beginTransaction();
+            session.merge(booking);
+            tx.commit();
+            return true;
+        } catch (Exception e) {
+            if (tx != null) tx.rollback();
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public Booking getBookingById(int id) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            return session.get(Booking.class, id);
+        }
+    }
+
+    public boolean deleteBookingById(int bookingId) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            Transaction tx = session.beginTransaction();
+            Booking booking = session.get(Booking.class, bookingId);
+            if (booking != null) {
+                session.delete(booking);
+                tx.commit();
+                return true;
             }
-            return bks;
+            return false;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
         }
     }
 }

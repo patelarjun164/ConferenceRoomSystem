@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* Reset some default styles */
+        * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+        }
+
+        body {
+          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+          background-color: #f5f7fa;
+          min-height: 100vh;
+          display: flex;
+          flex-direction: column;
+        }
+
+        /* Navbar */
+        .navbar {
+          background-color: #2c3e50;
+          padding: 1rem 2rem;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          position: sticky;
+          top: 0;
+          z-index: 1000;
+        }
+
+        .navbar h1 {
+          color: white;
+          font-size: 1.5rem;
+        }
+
+        .logout-button {
+          background-color: #e74c3c;
+          color: white;
+          border: none;
+          border-radius: 6px;
+          padding: 10px 18px;
+          font-size: 1rem;
+          cursor: pointer;
+          transition: background-color 0.3s ease;
+        }
+
+        .logout-button:hover {
+          background-color: #c0392b;
+        }
+
+        /* Dashboard Container */
+        .dashboard {
+          padding: 2rem;
+          flex-grow: 1;
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+          gap: 1.5rem;
+        }
+
+        .card {
+          background: white;
+          padding: 1.5rem;
+          border-radius: 12px;
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+          text-align: center;
+          transition: transform 0.3s, box-shadow 0.3s;
+          cursor: pointer;
+        }
+
+        .card:hover {
+          transform: translateY(-5px);
+          box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        .card h2 {
+          font-size: 1.2rem;
+          color: #333;
+          margin-bottom: 0.5rem;
+        }
+
+        /* Responsive tweaks */
+        @media (max-width: 600px) {
+          .navbar {
+            flex-direction: column;
+            align-items: flex-start;
+          }
+          .logout-button {
+            margin-top: 10px;
+            width: 100%;
+            text-align: center;
+          }
+        }
+
+        /* Loader while session fetch */
+        .loader {
+          text-align: center;
+          margin-top: 4rem;
+          font-size: 1.2rem;
+          color: #555;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<div class="navbar">
+    <h1>Dashboard</h1>
+    <button class="logout-button" onclick="logout()">Logout</button>
+</div>
+
+<!-- Dashboard Activities -->
+<div id="dashboardContent" class="dashboard">
+    <div class="loader">Loading your dashboard...</div>
+</div>
+
+<script>
+    async function fetchSessionAndLoadDashboard() {
+        try {
+            const response = await fetch('/session');
+            if (!response.ok) {
+                throw new Error('Session fetch failed');
+            }
+            const session = await response.json();
+            const role = session.role;
+            const dashboard = document.getElementById('dashboardContent');
+            dashboard.innerHTML = ''; // clear loader
+
+            if (role === 'ADMIN') {
+                // Admin activities
+                const adminActivities = [
+                    { title: "Add Room", link: "/AddRoom.html" },
+                    { title: "Delete Room", link: "/admin/delete-room" },
+                    { title: "Update Room", link: "/admin/update-room" },
+                    { title: "Display All Users", link: "/admin/display-users" },
+                    { title: "Update User", link: "/admin/update-user" }
+                    // Add more here easily later
+                ];
+
+                adminActivities.forEach(activity => {
+                    const card = createCard(activity.title, activity.link);
+                    dashboard.appendChild(card);
+                });
+
+            }
+                // Employee activities
+                const employeeActivities = [
+                    { title: "Book Room", link: "/BookRoom.html" },
+                    { title: "Update Booking", link: "/BookingUpdate.html" },
+                    { title: "Delete Booking", link: "/DeleteBooking.html" },
+                    { title: "Your Bookings", link: "/UserBookings.html" }
+                    // Add more here easily later
+                ];
+
+                employeeActivities.forEach(activity => {
+                    const card = createCard(activity.title, activity.link);
+                    dashboard.appendChild(card);
+                });
+
+        } catch (error) {
+            console.error(error);
+            document.getElementById('dashboardContent').innerHTML = `
+              <div style="text-align: center; margin-top: 2rem;">
+                <p style="font-size: 1.2rem; color: red;">Session expired or not logged in.</p>
+                <p>Redirecting to login page...</p>
+              </div>
+            `;
+            setTimeout(() => {
+                window.location.href = "/Login.html";
+            }, 3000);
+        }
+    }
+
+    function createCard(title, link) {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `<h2>${title}</h2>`;
+        card.onclick = () => window.location.href = link;
+        return card;
+    }
+
+    async function logout() {
+        try {
+            const response = await fetch('/user/logout', { method: 'GET' });
+            if (response.ok) {
+                window.location.href = '/Login.html';
+            } else {
+                alert('Logout failed.');
+            }
+        } catch (error) {
+            console.error('Logout error', error);
+            alert('Logout error.');
+        }
+    }
+
+    // Initial fetch
+    fetchSessionAndLoadDashboard();
+</script>
+
+</body>
+</html>

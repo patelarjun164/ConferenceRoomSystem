@@ -45,11 +45,23 @@ public class BookingService {
     }
 
     public List<Booking> getBookingsByUser(int userId) {
-        List<Booking> bks = bookingDAO.getBookingsByUserId(userId);
-        for (Booking bk : bks){
-            System.out.println(bk.getId());
-        }
-        return bks;
+//        List<Booking> bks = bookingDAO.getBookingsByUserId(userId);
+//        for (Booking bk : bks){
+//            System.out.println(bk.getId());
+//        }
+        return bookingDAO.getBookingsByUserId(userId);
+    }
+
+    public boolean updateBooking(Booking booking) {
+        return bookingDAO.updateBooking(booking);
+    }
+
+    public Booking getBookingById(int id) {
+        return bookingDAO.getBookingById(id);
+    }
+
+    public boolean deleteBooking(int bookingId) {
+        return bookingDAO.deleteBookingById(bookingId);
     }
 }
 

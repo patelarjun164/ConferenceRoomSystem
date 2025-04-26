@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Your Bookings</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <style>
+        body {
+          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+          background-color: #f0f2f5;
+          margin: 0;
+          padding: 0;
+        }
+
+        /* Navbar Styling */
+        .navbar {
+          background-color: #333;
+          padding: 1rem;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          flex-wrap: wrap;
+        }
+
+        .navbar-buttons {
+          display: flex;
+          gap: 10px;
+          flex-wrap: wrap;
+        }
+
+        .nav-button {
+          background-color: #4CAF50;
+          color: white;
+          border: none;
+          border-radius: 8px;
+          padding: 10px 16px;
+          font-size: 1rem;
+          cursor: pointer;
+          transition: background-color 0.3s ease;
+          text-decoration: none;
+          display: inline-block;
+          text-align: center;
+        }
+
+        .nav-button:hover {
+          background-color: #45a049;
+        }
+
+        h1 {
+          text-align: center;
+          color: #333;
+          margin-top: 1rem;
+          padding: 0 1rem;
+        }
+
+        .container {
+          max-width: 1200px;
+          margin: 2rem auto;
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+          gap: 1.5rem;
+          padding: 0 1rem;
+        }
+
+        .card {
+          background-color: #fff;
+          border-radius: 12px;
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+          padding: 1.5rem;
+          position: relative;
+          transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+          transform: scale(1.02);
+        }
+
+        .card p {
+          margin: 0.3rem 0;
+        }
+
+        .equipment-list {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 8px;
+          margin: 10px 0;
+        }
+
+        .equipment-item {
+          background-color: #e0e0e0;
+          border-radius: 12px;
+          padding: 5px 10px;
+          font-size: 0.85rem;
+        }
+
+        .delete-button {
+          margin-top: 10px;
+          background-color: red;
+          color: white;
+          border: none;
+          border-radius: 8px;
+          padding: 10px 12px;
+          cursor: pointer;
+          font-size: 0.95rem;
+          width: 100%;
+          transition: background-color 0.3s ease;
+        }
+
+        .delete-button:hover {
+          background-color: darkred;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 600px) {
+          .navbar {
+            flex-direction: column;
+            align-items: flex-start;
+          }
+
+          .navbar-buttons {
+            flex-direction: column;
+            width: 100%;
+            margin-top: 10px;
+          }
+
+          .nav-button {
+            width: 100%;
+            text-align: center;
+          }
+
+          .container {
+            grid-template-columns: 1fr;
+          }
+
+          .delete-button {
+            font-size: 1rem;
+          }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navigation Bar -->
+<div class="navbar">
+    <div><h2 style="color:white; margin:0;">Bookings</h2></div>
+    <div class="navbar-buttons">
+        <a class="nav-button" href="/Login.html">Home</a>
+        <button class="nav-button" onclick="logout()">Logout</button>
+    </div>
+</div>
+
+<h1>Your Bookings</h1>
+<div class="container" id="bookingsContainer"></div>
+
+<script>
+    async function fetchBookings() {
+      try {
+        const response = await fetch("/protected/user/bookings");
+
+        if (response.status === 401) {
+          const container = document.getElementById("bookingsContainer");
+          container.innerHTML = `
+            <div style="text-align: center; margin-top: 2rem;">
+              <p style="font-size: 1.2rem; color: red;">You are not logged in. <a href="/Login.html">Login here</a></p>
+              <p>Redirecting to login page...</p>
+            </div>
+          `;
+          setTimeout(() => {
+            window.location.href = "/Login.html";
+          }, 2000);
+          return;
+        }
+
+        const bookings = await response.json();
+        const container = document.getElementById("bookingsContainer");
+        container.innerHTML = '';
+
+        bookings.forEach(booking => {
+          const room = booking.room;
+          const card = document.createElement("div");
+          card.className = "card";
+
+          card.innerHTML = `
+            <h3>Room: ${room.name}</h3>
+            <p><strong>Location:</strong> ${room.location}</p>
+            <p><strong>Capacity:</strong> ${room.capacity}</p>
+            <div class="equipment-list">
+              ${room.equipment.map(eq => `<div class="equipment-item">${eq.name}</div>`).join('')}
+            </div>
+            <p><strong>Start:</strong> ${new Date(booking.startTime).toLocaleString()}</p>
+            <p><strong>End:</strong> ${new Date(booking.endTime).toLocaleString()}</p>
+            <p><strong>Purpose:</strong> ${booking.purpose}</p>
+            <button class="delete-button" onclick="deleteBooking(${booking.id})">Delete</button>
+          `;
+
+          container.appendChild(card);
+        });
+      } catch (error) {
+        console.error("Could not load bookings", error);
+        document.getElementById("bookingsContainer").innerHTML = "<p>Failed to load bookings. Try again later.</p>";
+      }
+    }
+
+    async function deleteBooking(bookingId) {
+      if (!confirm("Are you sure you want to delete this booking?")) return;
+
+      try {
+        const response = await fetch("/protected/delete/book", {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: new URLSearchParams({ bookingId })
+        });
+
+        const result = await response.text();
+        alert(result);
+        if (response.ok) {
+          fetchBookings(); // refresh list
+        }
+      } catch (error) {
+        console.error("Delete error:", error);
+        alert("Failed to delete booking.");
+      }
+    }
+
+    async function logout() {
+      try {
+        const response = await fetch("/user/logout", { method: "GET" });
+        if (response.ok) {
+          window.location.href = "/Login.html";
+        } else {
+          alert("Failed to logout.");
+        }
+      } catch (error) {
+        console.error("Logout error:", error);
+        alert("Logout failed.");
+      }
+    }
+
+    // Initial fetch
+    fetchBookings();
+</script>
+</body>
+</html>
