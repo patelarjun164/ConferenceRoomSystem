@@ -10,12 +10,21 @@ import jakarta.servlet.http.*;
 import java.io.IOException;
 import java.util.List;
 
-@WebServlet("/rooms")
+@WebServlet("/admin/rooms")
 public class GetAllRoomsServlet extends HttpServlet {
     private final RoomService roomService = new RoomService();
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+
+        HttpSession session = request.getSession(false);
+
+        // Check if the session is null or if the user is not an admin
+        if (session == null) {
+            // If the user is not logged in, redirect to login page
+            response.sendRedirect("Login.html");
+            return;
+        }
 
         try {
             List<Room> rooms = roomService.fetchAllRooms();

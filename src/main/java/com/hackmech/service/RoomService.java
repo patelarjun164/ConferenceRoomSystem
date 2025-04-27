@@ -44,7 +44,7 @@ public class RoomService {
         return roomDao.getAllRooms();
     }
 
-    public void deleteRoom(int id) {
-        roomDao.deleteRoom(id);
+    public boolean deleteRoom(int id) {
+        return roomDao.deleteRoom(id);
     }
 }

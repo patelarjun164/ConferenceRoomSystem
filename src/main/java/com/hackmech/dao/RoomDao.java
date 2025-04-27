@@ -33,7 +33,7 @@ public class RoomDao {
         }
     }
 
-    public void deleteRoom(int roomId) {
+    public boolean deleteRoom(int roomId) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Room room = session.get(Room.class, roomId);
@@ -41,11 +41,13 @@ public class RoomDao {
                 transaction = session.beginTransaction();
                 session.remove(room);
                 transaction.commit();
+                return true;
             }
         } catch (Exception e) {
             if (transaction != null) transaction.rollback();
             e.printStackTrace();
         }
+        return false;
     }
 
     public Room getRoomById(int id) {
