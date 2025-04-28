@@ -1,243 +1,245 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>Update User</title>
     <style>
-        /* Base styles */
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f5f8f7;
-        }
+      /* Base styles */
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f5f8f7;
+      }
 
-        /* Navbar */
-        .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: #333;
-            padding: 0.8rem 1rem;
-        }
+      /* Navbar */
+      .navbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #333;
+        padding: 0.8rem 1rem;
+      }
 
-        .navbar a {
-            color: white;
-            text-decoration: none;
-            margin: 0 0.75rem;
-            font-size: 1.1rem;
-        }
+      .navbar a {
+        color: white;
+        text-decoration: none;
+        margin: 0 0.75rem;
+        font-size: 1.1rem;
+      }
 
-        .navbar a:hover {
-            text-decoration: underline;
-        }
+      .navbar a:hover {
+        text-decoration: underline;
+      }
 
-        /* Form Container */
+      /* Form Container */
+      .form-container {
+        background-color: white;
+        width: 100%;
+        max-width: 450px;
+        margin: 2rem auto;
+        padding: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        box-sizing: border-box;
+      }
+
+      /* Make it expand on smaller screens */
+      @media (max-width: 768px) {
         .form-container {
-            background-color: white;
-            width: 100%;
-            max-width: 450px;
-            margin: 2rem auto;
-            padding: 2rem;
-            border-radius: 12px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            box-sizing: border-box;
+          max-width: 80%;
+          padding: 1.5rem;
         }
+      }
 
-        /* Make it expand on smaller screens */
-        @media (max-width: 768px) {
-            .form-container {
-                max-width: 80%;
-                padding: 1.5rem;
-            }
+      @media (max-width: 480px) {
+        .form-container {
+          max-width: 90%;
+          padding: 1rem;
         }
+      }
 
-        @media (max-width: 480px) {
-            .form-container {
-                max-width: 90%;
-                padding: 1rem;
-            }
-        }
+      /* Form Elements */
+      h2 {
+        text-align: center;
+        margin-bottom: 1.5rem;
+        color: #333;
+      }
 
-        /* Form Elements */
-        h2 {
-            text-align: center;
-            margin-bottom: 1.5rem;
-            color: #333;
-        }
+      label {
+        display: block;
+        margin-top: 1rem;
+        margin-bottom: 0.5rem;
+        color: #555;
+        font-weight: 500;
+      }
 
-        label {
-            display: block;
-            margin-top: 1rem;
-            margin-bottom: 0.5rem;
-            color: #555;
-            font-weight: 500;
-        }
+      input[type="text"],
+      input[type="email"],
+      select {
+        width: 100%;
+        padding: 0.6rem;
+        margin-top: 0.3rem;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-size: 1rem;
+        box-sizing: border-box;
+      }
 
-        input[type="text"],
-        input[type="email"],
-        select {
-            width: 100%;
-            padding: 0.6rem;
-            margin-top: 0.3rem;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            font-size: 1rem;
-            box-sizing: border-box;
-        }
+      input[type="email"] {
+        background-color: #f0f0f0;
+        color: #888;
+      }
 
-        input[type="email"] {
-            background-color: #f0f0f0;
-            color: #888;
-        }
+      /* Submit Button */
+      button {
+        margin-top: 1.5rem;
+        width: 100%;
+        padding: 0.8rem;
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-size: 1.1rem;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
 
-        /* Submit Button */
-        button {
-            margin-top: 1.5rem;
-            width: 100%;
-            padding: 0.8rem;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 1.1rem;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
+      button:hover {
+        background-color: #45a049;
+      }
 
-        button:hover {
-            background-color: #45a049;
-        }
-
-        /* Message */
-        #message {
-            text-align: center;
-            color: red;
-            font-size: 1.2rem;
-        }
+      /* Message */
+      #message {
+        text-align: center;
+        color: red;
+        font-size: 1.2rem;
+      }
     </style>
-</head>
-<body onload="checkSession()">
+  </head>
+  <body onload="checkSession()">
+    <div class="navbar">
+      <a href="/DashBoard.html">Home</a>
+      <a href="/AllUsers.html">Back to Users</a>
+    </div>
 
-<div class="navbar">
-    <a href="/DashBoard.html">Home</a>
-    <a href="/AllUsers.html">Back to Users</a>
-</div>
-
-<div class="form-container">
-    <h2>Update User</h2>
-    <form id="updateForm" onsubmit="submitUpdate(event)">
+    <div class="form-container">
+      <h2>Update User</h2>
+      <form id="updateForm" onsubmit="submitUpdate(event)">
         <div class="form-group">
-            <label for="name">Name</label>
-            <input type="text" id="name" name="name" required>
+          <label for="name">Name</label>
+          <input type="text" id="name" name="name" required />
         </div>
 
         <div class="form-group">
-            <label for="email">Email (cannot edit)</label>
-            <input type="email" id="email" name="email" disabled>
+          <label for="email">Email (cannot edit)</label>
+          <input type="email" id="email" name="email" disabled />
         </div>
 
         <div class="form-group">
-            <label for="role">Role</label>
-            <select id="role" name="role" required>
-                <option value="EMPLOYEE">User</option>
-                <option value="ADMIN">Admin</option>
-            </select>
+          <label for="role">Role</label>
+          <select id="role" name="role" required>
+            <option value="EMPLOYEE">User</option>
+            <option value="ADMIN">Admin</option>
+          </select>
         </div>
 
         <div class="form-actions">
-            <button type="submit">Update</button>
+          <button type="submit">Update</button>
         </div>
-    </form>
-    <div id="message"></div>
-</div>
+      </form>
+      <div id="message"></div>
+    </div>
 
-<script>
-    // Check if the user is logged in and if the user is an admin
-    function checkSession() {
-        fetch('/session')
-            .then(response => {
-                if (response.ok) {
-                    return response.json(); // Get logged-in user data
-                } else {
-                    throw new Error('User not logged in');
-                }
-            })
-            .then(loggedInUser => {
-                if (loggedInUser.role !== "ADMIN") {
-                    // If not an admin, show message and hide form
-                    document.getElementById('message').style.color = "red";
-                    document.getElementById('message').innerText = "Only Admin can access this.";
-                    document.getElementById('updateForm').style.display = "none";
-                } else {
-                    // If admin, load user data and show the form
-                    loadUserForm();
-                }
-            })
-            .catch(error => {
-                document.getElementById('message').style.color = "red";
-                document.getElementById('message').innerText = "User not logged in yet. Redirecting to login...";
-                setTimeout(() => {
-                    window.location.href = "Login.html";
-                }, 3000);
-            });
-    }
+    <script>
+      // Check if the user is logged in and if the user is an admin
+      function checkSession() {
+        fetch("/session")
+          .then((response) => {
+            if (response.ok) {
+              return response.json(); // Get logged-in user data
+            } else {
+              throw new Error("User not logged in");
+            }
+          })
+          .then((loggedInUser) => {
+            if (loggedInUser.role !== "ADMIN") {
+              // If not an admin, show message and hide form
+              document.getElementById("message").style.color = "red";
+              document.getElementById("message").innerText =
+                "Only Admin can access this.";
+              document.getElementById("updateForm").style.display = "none";
+            } else {
+              // If admin, load user data and show the form
+              loadUserForm();
+            }
+          })
+          .catch((error) => {
+            document.getElementById("message").style.color = "red";
+            document.getElementById("message").innerText =
+              "User not logged in yet. Redirecting to login...";
+            setTimeout(() => {
+              window.location.href = "Login.html";
+            }, 3000);
+          });
+      }
 
-    function loadUserForm() {
-    const userStr = sessionStorage.getItem('updateUser');
-    if (!userStr) {
-        document.getElementById('message').style.color = "red";
-        document.getElementById('message').innerText = "No user selected for update.";
-        document.getElementById('updateForm').style.display = "none";
-        return;
-    }
+      function loadUserForm() {
+        const userStr = sessionStorage.getItem("updateUser");
+        if (!userStr) {
+          document.getElementById("message").style.color = "red";
+          document.getElementById("message").innerText =
+            "No user selected for update.";
+          document.getElementById("updateForm").style.display = "none";
+          return;
+        }
 
-    const user = JSON.parse(userStr);
-    document.getElementById('name').value = user.name;
-    document.getElementById('email').value = user.email;
-    document.getElementById('role').value = user.role;
-}
+        const user = JSON.parse(userStr);
+        document.getElementById("name").value = user.name;
+        document.getElementById("email").value = user.email;
+        document.getElementById("role").value = user.role;
+      }
 
-
-
-    // Submit the update form
-    function submitUpdate(event) {
+      // Submit the update form
+      function submitUpdate(event) {
         event.preventDefault();
 
-        const userStr = sessionStorage.getItem('updateUser');
+        const userStr = sessionStorage.getItem("updateUser");
         const user = JSON.parse(userStr);
 
         const updatedUser = {
-            id: user.id,
-            name: document.getElementById('name').value,
-            email: document.getElementById('email').value,
-            role: document.getElementById('role').value
+          id: user.id,
+          name: document.getElementById("name").value,
+          email: document.getElementById("email").value,
+          role: document.getElementById("role").value,
         };
 
-        fetch('/admin/updateUser', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            body: new URLSearchParams(updatedUser)
+        fetch("/admin/updateUser", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: new URLSearchParams(updatedUser),
         })
-        .then(response => {
+          .then((response) => {
             if (response.ok) {
-                document.getElementById('message').style.color = "green";
-                document.getElementById('message').innerText = "User updated successfully!";
-                setTimeout(() => {
-                    window.location.href = 'AllUsers.html';
-                }, 2000);
+              document.getElementById("message").style.color = "green";
+              document.getElementById("message").innerText =
+                "User updated successfully!";
+              setTimeout(() => {
+                window.location.href = "AllUsers.html";
+              }, 2000);
             } else {
-                document.getElementById('message').innerText = "Failed to update user.";
+              document.getElementById("message").innerText =
+                "Failed to update user.";
             }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            document.getElementById('message').innerText = "Error updating user.";
-        });
-    }
-</script>
-
-</body>
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+            document.getElementById("message").innerText =
+              "Error updating user.";
+          });
+      }
+    </script>
+  </body>
 </html>

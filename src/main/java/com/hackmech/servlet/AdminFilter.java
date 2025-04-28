@@ -20,7 +20,7 @@ public class AdminFilter implements Filter {
 
         HttpSession session = req.getSession(false);
         if (session == null) {
-            res.sendError(HttpServletResponse.SC_FORBIDDEN, "No session available. Unauthorized access.");
+            res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "No session available. Unauthorized access.");
             return;
         }
 
