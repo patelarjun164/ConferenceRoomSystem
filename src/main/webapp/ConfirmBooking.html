@@ -135,7 +135,7 @@
         <a href="/DashBoard.html" class="home-btn">Dashboard</a>
         <a href="/BookRoom.html" class="back-btn">Back to Book Room</a>
       </div>
-      <a href="/logout" class="logout-btn">Logout</a>
+      <a href="/logout" onclick="logout()" class="logout-btn">Logout</a>
     </div>
 
     <div class="container">
@@ -172,6 +172,14 @@
     </div>
 
     <script>
+        fetch("/session").then((res) => {
+        if (res.status === 401) {
+          document.body.innerHTML =
+            "<h2>User not logged in. Redirecting to login...</h2>";
+          setTimeout(() => (window.location.href = "/Login.html"), 3000);
+        }
+      });
+
       // Fetch selected room from sessionStorage
       const selectedRoom = JSON.parse(sessionStorage.getItem("selectedRoom"));
 
@@ -229,6 +237,12 @@
                 "An error occurred. Please try again.";
             });
         });
+
+        function logout() {
+        fetch("/user/logout", { method: "POST" }).then(
+          () => (window.location.href = "/Login.html")
+        );
+      }
     </script>
   </body>
 </html>

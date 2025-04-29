@@ -195,27 +195,11 @@
         if (res.status === 401) {
           document.body.innerHTML =
             "<h2>User not logged in. Redirecting to login...</h2>";
-          setTimeout(() => (window.location.href = "/login.html"), 3000);
+          setTimeout(() => (window.location.href = "/Login.html"), 3000);
         }
       });
 
       function searchRooms() {
-        // const formData = new URLSearchParams();
-        // formData.append("roomId", selectedRoom.id);
-        // formData.append(
-        //   "startTime",
-        //   document.getElementById("startTime").value
-        // );
-        // formData.append("endTime", document.getElementById("endTime").value);
-
-        // fetch("/protected/bookRoom", {
-        //   method: "POST",
-        //   headers: {
-        //     "Content-Type": "application/x-www-form-urlencoded",
-        //   },
-        //   body: formData.toString(),
-        // })
-
         const capacity = document.getElementById("capacity").value;
         const selectedEquipments = [
           ...document.querySelectorAll("#equipmentList input:checked"),
@@ -281,12 +265,12 @@
       }
 
       function goHome() {
-        window.location.href = "/protected/home.html";
+        window.location.href = "DashBoard.html";
       }
 
       function logout() {
-        fetch("/logout", { method: "POST" }).then(
-          () => (window.location.href = "/login.html")
+        fetch("/user/logout", { method: "POST" }).then(
+          () => (window.location.href = "/Login.html")
         );
       }
     </script>

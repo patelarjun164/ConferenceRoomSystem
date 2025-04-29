@@ -8,10 +8,7 @@ import org.hibernate.query.NativeQuery;
 import org.hibernate.query.Query;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class RoomDao {
 
@@ -117,6 +114,7 @@ public class RoomDao {
                     slot.put("end", ((java.sql.Timestamp) booking[1]).toLocalDateTime());
                     occupiedSlots.add(slot);
                 }
+                Collections.reverse(occupiedSlots);
 
                 result.put(room, occupiedSlots);
             }

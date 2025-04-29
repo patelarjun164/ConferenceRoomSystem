@@ -10,6 +10,7 @@ import org.hibernate.Session;
 
 import java.io.IOException;
 
+@MultipartConfig
 @WebServlet("/user/register")
 public class RegisterServlet extends HttpServlet {
 
@@ -23,32 +24,23 @@ public class RegisterServlet extends HttpServlet {
         String name = req.getParameter("name");
         String email = req.getParameter("email");
         String password = req.getParameter("password");
-        String role = req.getParameter("role");
 
-        System.out.println(name);
-        System.out.println(email);
-        System.out.println(password);
-        System.out.println(role);
-
-        User user = new User(name, email, password, role);
-//        user.setName(name);
-//        user.setEmail(email);
-//        user.setPassword(password);
-//        user.setRole("EMPLOYEE");
+        User user = new User(name, email, password, "EMPLOYEE");
 
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             UserService service = new UserService();
             boolean success = service.register(user, session);
 
             if (success) {
-                //if success, redirect
+                resp.setStatus(HttpServletResponse.SC_CREATED); // 201 Created
                 resp.getWriter().write("success");
             } else {
-                //else show error
+                resp.setStatus(HttpServletResponse.SC_CONFLICT); // 409 Conflict (e.g., duplicate email)
                 resp.getWriter().write("error");
             }
         } catch (Exception e) {
             e.printStackTrace();
+            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR); // 500 Internal Server Error
             resp.getWriter().write("exception");
         }
     }

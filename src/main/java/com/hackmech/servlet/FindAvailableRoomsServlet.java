@@ -33,7 +33,7 @@ public class FindAvailableRoomsServlet extends HttpServlet {
             int capacity = Integer.parseInt(req.getParameter("capacity"));
             System.out.println("Capacity = " + capacity);
 
-// Get all selected equipment IDs
+            // Get all selected equipment IDs
             String[] equipmentIdsParam = req.getParameterValues("equipment");
 
             List<Integer> equipmentIds = new ArrayList<>();

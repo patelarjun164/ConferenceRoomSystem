@@ -53,7 +53,6 @@ public class UserBookingsServlet extends HttpServlet {
                             (com.google.gson.JsonSerializer<LocalDateTime>) (src, typeOfSrc, context) ->
                                     new com.google.gson.JsonPrimitive(src.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)))
                     .create();
-            //here LocalDate is not suppotred bu GSON thats why we added registerTypeAdapter
             json = gson.toJson(bookings);
         } catch (Exception e) {
             e.printStackTrace();

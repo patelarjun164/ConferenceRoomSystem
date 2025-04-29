@@ -9,6 +9,7 @@ import org.hibernate.query.NativeQuery;
 import org.hibernate.query.Query;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 
 public class BookingDao {
@@ -74,7 +75,9 @@ public class BookingDao {
             String sql = "SELECT * FROM Booking WHERE user_id = ?";
             Query<Booking> query = session.createNativeQuery(sql, Booking.class);
             query.setParameter(1, userId);
-            return query.getResultList();
+            List<Booking> bookings = query.getResultList();
+            Collections.reverse(bookings);
+            return bookings;
 //            for (Booking bk : bks){
 //                System.out.println(bk.getId());
 //            }

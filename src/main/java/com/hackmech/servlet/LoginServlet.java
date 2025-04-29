@@ -13,6 +13,7 @@ import org.hibernate.Session;
 
 import java.io.IOException;
 
+@MultipartConfig
 @WebServlet("/user/login")
 public class LoginServlet extends HttpServlet {
 
@@ -45,9 +46,11 @@ public class LoginServlet extends HttpServlet {
                 httpSession.setAttribute("role", user.getRole());
                 System.out.println("Over Success Message");
                 resp.getWriter().write("success");
-                resp.sendRedirect("/DashBoard.html");
+//                resp.sendRedirect("/DashBoard.html");
+                resp.setStatus(HttpServletResponse.SC_OK);
                 System.out.println("Below success Message");
             } else {
+                resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 resp.getWriter().write("invalid");
             }
         } catch (Exception e) {

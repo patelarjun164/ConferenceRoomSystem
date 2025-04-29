@@ -18,11 +18,8 @@ public class LogoutServlet extends HttpServlet {
             HttpSession session = request.getSession(false);
             if (session != null) {
                 User user = (User) session.getAttribute("user");
-                System.out.println("logout success");
-                System.out.println(user.getName());
-                System.out.println(user.getEmail());
-                response.getWriter().write("success");
                 session.invalidate();
+                response.getWriter().write("success");
             } else {
                 response.getWriter().write("user not loggedIn yet!");
             }
