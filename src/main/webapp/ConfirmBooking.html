@@ -158,7 +158,12 @@
         <input type="datetime-local" id="endTime" required />
 
         <label>Purpose:</label>
-        <textarea id="purpose" rows="3" placeholder="Enter the purpose of booking..." required></textarea>
+        <textarea
+          id="purpose"
+          rows="3"
+          placeholder="Enter the purpose of booking..."
+          required
+        ></textarea>
 
         <button type="submit">Book Room</button>
 
@@ -204,13 +209,18 @@
             method: "POST",
             body: formData,
           })
-            .then((response) => response.text())
-            .then((msg) => {
-              if (msg.includes("success")) {
-                alert("Room booked successfully!");
-                window.location.href = "/UserBooking.html";
+            .then((response) => response.json())
+            .then((data) => {
+              const resultDiv = document.getElementById("message");
+              if (data.status === "success") {
+                console.log("Booking successful:", data);
+                console.log("Booking successful:", data.status);
+                resultDiv.innerHTML = `<p style="color:green;">✅ ${data.message}</p>`;
+                setTimeout(() => {
+                  window.location.href = "UserBookings.html";
+                }, 3000);
               } else {
-                document.getElementById("message").innerText = "Failed to Book a room!";
+                resultDiv.innerHTML = `<p style="color:red;">❌ ${data.message}</p>`;
               }
             })
             .catch((error) => {

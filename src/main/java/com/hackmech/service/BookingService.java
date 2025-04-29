@@ -12,36 +12,20 @@ public class BookingService {
 
     private final BookingDao bookingDAO = new BookingDao();
 
-    public boolean isRoomAvailable(Room room, LocalDateTime start, LocalDateTime end) {
-        List<Booking> existingBookings = bookingDAO.getBookingsForRoom(room);
+    public boolean bookRoom(Room room, User user, LocalDateTime startTime, LocalDateTime endTime, String purpose) {
+        // Check for overlapping bookings
+        boolean isAvailable = bookingDAO.isRoomAvailable(room.getId(), startTime, endTime);
+        if (!isAvailable) return false;
 
-        System.out.println("---------");
-        System.out.println("room id " + room.getId());
+        // If available, create and save booking
+        Booking booking = new Booking();
+        booking.setRoom(room);
+        booking.setUser(user);
+        booking.setStartTime(startTime);
+        booking.setEndTime(endTime);
+        booking.setPurpose(purpose);
 
-        for (Booking booking : existingBookings) {
-            if (start.isBefore(booking.getEndTime()) && end.isAfter(booking.getStartTime())) {
-                // There is a time overlap
-                System.out.println("OVERLap checking started__-----");
-                System.out.println("new start time "  + start);
-                System.out.println("old start time" + booking.getStartTime());
-                System.out.println("new end time "  + end);
-                System.out.println("old end time" + booking.getEndTime());
-                System.out.println("OVERLap checking ended__-----");
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    public boolean bookRoom(Room room, User user, LocalDateTime start, LocalDateTime end, String purpose) {
-        if (!isRoomAvailable(room, start, end)) {
-            return false; // Conflict overlap timing
-        }
-
-        Booking newBooking = new Booking(room, user, start, end, purpose);
-        bookingDAO.saveBooking(newBooking);
-        return true;
+        return bookingDAO.saveBooking(booking);
     }
 
     public List<Booking> getBookingsByUser(int userId) {

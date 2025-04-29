@@ -5,35 +5,68 @@ import com.hackmech.model.Room;
 import com.hackmech.util.HibernateUtil;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.query.NativeQuery;
 import org.hibernate.query.Query;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class BookingDao {
 
-    public void saveBooking(Booking booking) {
-        Transaction transaction = null;
+//    public void saveBooking(Booking booking) {
+//        Transaction transaction = null;
+//        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+//            transaction = session.beginTransaction();
+//            session.persist(booking);
+//            transaction.commit();
+//        } catch (Exception e) {
+//            if (transaction != null) transaction.rollback();
+//            e.printStackTrace();
+//        }
+//    }
+
+//    public List<Booking> getBookingsForRoom(Room room) {
+//        List<Booking> bookings = null;
+//        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+//            String sql = "select * FROM booking WHERE id = ?";
+//            Query<Booking> query = session.createNativeQuery(sql, Booking.class);
+//            query.setParameter(1, room.getId());
+//            bookings = query.getResultList();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        return bookings;
+//    }
+
+    public boolean isRoomAvailable(int roomId, LocalDateTime startTime, LocalDateTime endTime) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            transaction = session.beginTransaction();
-            session.persist(booking);
-            transaction.commit();
-        } catch (Exception e) {
-            if (transaction != null) transaction.rollback();
-            e.printStackTrace();
+            String sql = "SELECT COUNT(*) FROM booking " +
+                    "WHERE room_id = ? " +
+                    "AND start_time < ? " +
+                    "AND end_time > ?";
+
+            NativeQuery<?> query = session.createNativeQuery(sql);
+            query.setParameter(1, roomId);
+            query.setParameter(2, endTime);
+            query.setParameter(3, startTime);
+
+            Number count = (Number) query.getSingleResult();
+            return count.intValue() == 0; // True if no overlapping
         }
     }
 
-    public List<Booking> getBookingsForRoom(Room room) {
-        List<Booking> bookings = null;
+    public boolean saveBooking(Booking booking) {
+        Transaction tx = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            String sql = "select * FROM booking WHERE id = ?";
-            Query<Booking> query = session.createNativeQuery(sql, Booking.class);
-            query.setParameter(1, room.getId());
-            bookings = query.getResultList();
+            tx = session.beginTransaction();
+            session.persist(booking);
+            tx.commit();
+            return true;
         } catch (Exception e) {
+            if (tx != null) tx.rollback();
             e.printStackTrace();
+            return false;
         }
-        return bookings;
     }
 
     public List<Booking> getBookingsByUserId(int userId) {

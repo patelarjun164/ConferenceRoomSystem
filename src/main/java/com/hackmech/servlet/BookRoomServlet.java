@@ -14,12 +14,11 @@ import jakarta.servlet.http.HttpSession;
 import org.hibernate.Session;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-@MultipartConfig
 @WebServlet("/protected/book-room")
+@MultipartConfig
 public class BookRoomServlet extends HttpServlet {
 
     private final BookingService bookingService = new BookingService();
@@ -28,49 +27,44 @@ public class BookRoomServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        System.out.println("int book-room doPosr servelt");
-        HttpSession httpSession = request.getSession();
+        HttpSession httpSession = request.getSession(false);
+        if (httpSession == null || httpSession.getAttribute("user") == null) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("{\"status\":\"error\", \"message\":\"User not logged in\"}");
+            return;
+        }
+
         User user = (User) httpSession.getAttribute("user");
 
-        int roomId = Integer.parseInt(request.getParameter("roomId"));
-        String startTimeStr = request.getParameter("startTime");
-        String endTimeStr = request.getParameter("endTime");
-        String purpose = request.getParameter("purpose");
+        try {
+            int roomId = Integer.parseInt(request.getParameter("roomId"));
+            String startTimeStr = request.getParameter("startTime");
+            String endTimeStr = request.getParameter("endTime");
+            String purpose = request.getParameter("purpose");
 
-        System.out.println(roomId);
-        System.out.println(startTimeStr);
-        System.out.println(endTimeStr);
-        System.out.println(purpose);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+            LocalDateTime startTime = LocalDateTime.parse(startTimeStr, formatter);
+            LocalDateTime endTime = LocalDateTime.parse(endTimeStr, formatter);
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
-        LocalDateTime startTime = LocalDateTime.parse(startTimeStr, formatter);
-        LocalDateTime endTime = LocalDateTime.parse(endTimeStr, formatter);
+            Room room;
+            try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+                room = session.get(Room.class, roomId);
+            }
 
-        Room room;
+            boolean success = bookingService.bookRoom(room, user, startTime, endTime, purpose);
 
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            room = session.get(Room.class, roomId);
-            System.out.println("from try " + room.getName());
-            System.out.println("from try " + user.getName());
+            response.setContentType("application/json");
+            if (success) {
+                response.getWriter().write("{\"status\":\"success\", \"message\":\"Booking confirmed\"}");
+            } else {
+                response.getWriter().write("{\"status\":\"error\", \"message\":\"Room already booked during this time\"}");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.setContentType("application/json");
+            response.getWriter().write("{\"status\":\"error\", \"message\":\"Invalid input or internal error\"}");
         }
-
-        boolean success = bookingService.bookRoom(room, user, startTime, endTime, purpose);
-
-        response.setContentType("text/html");
-        PrintWriter out = response.getWriter();
-
-        out.println("<html><body style='font-family:sans-serif; padding:2rem;'>");
-        if (success) {
-            System.out.println("booking confirm!");
-            out.write("booking confirm!");
-            out.println("<h2 style='color:green;'>✅ Booking confirmed!</h2>");
-        } else {
-            System.out.println("Booking failed. Room is already booked during that time.!");
-            out.write("Booking failed. Room is already booked during that time.");
-            out.println("<h2 style='color:red;'>❌ Booking failed. Room is already booked during that time.</h2>");
-        }
-        out.println("<a href='BookRoom.html'>Back to Booking</a>");
-        out.println("</body></html>");
     }
 }
-

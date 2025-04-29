@@ -31,8 +31,13 @@ public class Booking {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+    }
     // Constructors
-    public Booking() {}
+    public Booking() {
+    }
 
     public Booking(Room room, User user, LocalDateTime startTime, LocalDateTime endTime, String purpose) {
         this.room = room;
