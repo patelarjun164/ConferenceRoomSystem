@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Confirm Booking</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        padding: 10px;
+        margin: 0;
+        background-color: #f9f9f9;
+      }
+
+      .navbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #005f73;
+        color: white;
+        padding: 10px 20px;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .navbar a {
+        text-decoration: none;
+        padding: 8px 16px;
+        border-radius: 5px;
+        font-weight: bold;
+        color: white;
+        transition: background-color 0.2s;
+      }
+
+      .navbar .home-btn {
+        background-color: #0a9396; /* Light blue */
+      }
+
+      .navbar .back-btn {
+        background-color: #0a9396; /* Same light blue for consistency */
+      }
+
+      .navbar .logout-btn {
+        background-color: #ff4d4d; /* Red */
+      }
+
+      .navbar a:hover {
+        opacity: 0.85;
+      }
+
+      .container {
+        background-color: white;
+        padding: 20px;
+        margin-top: 20px;
+        border-radius: 10px;
+        max-width: 500px;
+        margin-left: auto;
+        margin-right: auto;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      h2 {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+
+      label {
+        display: block;
+        margin-top: 10px;
+        font-weight: bold;
+      }
+
+      input[type="text"],
+      input[type="datetime-local"],
+      textarea,
+      button {
+        width: 100%;
+        padding: 10px;
+        margin-top: 5px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-sizing: border-box;
+      }
+
+      input[disabled] {
+        background-color: #e9ecef;
+        color: #495057;
+      }
+
+      textarea {
+        resize: vertical;
+      }
+
+      button {
+        background-color: #28a745;
+        color: white;
+        margin-top: 20px;
+        cursor: pointer;
+        font-weight: bold;
+      }
+
+      button:hover {
+        background-color: #218838;
+      }
+
+      .message {
+        text-align: center;
+        margin-top: 15px;
+        font-size: 1em;
+        color: red;
+      }
+
+      @media (max-width: 480px) {
+        .container {
+          padding: 15px;
+          margin-top: 10px;
+        }
+
+        .navbar {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="navbar">
+      <div class="nav-links">
+        <a href="/DashBoard.html" class="home-btn">Dashboard</a>
+        <a href="/BookRoom.html" class="back-btn">Back to Book Room</a>
+      </div>
+      <a href="/logout" class="logout-btn">Logout</a>
+    </div>
+
+    <div class="container">
+      <h2>Confirm Your Booking</h2>
+
+      <form id="bookingForm">
+        <label>Room Name:</label>
+        <input type="text" id="roomName" disabled />
+
+        <label>Location:</label>
+        <input type="text" id="location" disabled />
+
+        <label>Capacity:</label>
+        <input type="text" id="capacity" disabled />
+
+        <label>Start Time:</label>
+        <input type="datetime-local" id="startTime" required />
+
+        <label>End Time:</label>
+        <input type="datetime-local" id="endTime" required />
+
+        <label>Purpose:</label>
+        <textarea id="purpose" rows="3" placeholder="Enter the purpose of booking..." required></textarea>
+
+        <button type="submit">Book Room</button>
+
+        <div class="message" id="message"></div>
+      </form>
+    </div>
+
+    <script>
+      // Fetch selected room from sessionStorage
+      const selectedRoom = JSON.parse(sessionStorage.getItem("selectedRoom"));
+
+      if (!selectedRoom) {
+        alert("No room selected. Redirecting...");
+        window.location.href = "/protected/userHome.html";
+      } else {
+        document.getElementById("roomName").value = selectedRoom.name;
+        document.getElementById("location").value = selectedRoom.location;
+        document.getElementById("capacity").value = selectedRoom.capacity;
+      }
+
+      document
+        .getElementById("bookingForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+
+          const startTime = document.getElementById("startTime").value;
+          const endTime = document.getElementById("endTime").value;
+          const purpose = document.getElementById("purpose").value.trim();
+
+          if (!startTime || !endTime || !purpose) {
+            document.getElementById("message").innerText =
+              "Please fill all fields correctly.";
+            return;
+          }
+
+          const formData = new FormData();
+          formData.append("roomId", selectedRoom.id);
+          formData.append("startTime", startTime);
+          formData.append("endTime", endTime);
+          formData.append("purpose", purpose);
+
+          fetch("/protected/book-room", {
+            method: "POST",
+            body: formData,
+          })
+            .then((response) => response.text())
+            .then((msg) => {
+              if (msg.includes("success")) {
+                alert("Room booked successfully!");
+                window.location.href = "/UserBooking.html";
+              } else {
+                document.getElementById("message").innerText = "Failed to Book a room!";
+              }
+            })
+            .catch((error) => {
+              console.error("Error:", error);
+              document.getElementById("message").innerText =
+                "An error occurred. Please try again.";
+            });
+        });
+    </script>
+  </body>
+</html>

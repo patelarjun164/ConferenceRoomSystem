@@ -5,6 +5,7 @@ import com.hackmech.model.User;
 import com.hackmech.service.BookingService;
 import com.hackmech.util.HibernateUtil;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,6 +18,7 @@ import java.io.PrintWriter;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+@MultipartConfig
 @WebServlet("/protected/book-room")
 public class BookRoomServlet extends HttpServlet {
 
@@ -26,6 +28,7 @@ public class BookRoomServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
+        System.out.println("int book-room doPosr servelt");
         HttpSession httpSession = request.getSession();
         User user = (User) httpSession.getAttribute("user");
 

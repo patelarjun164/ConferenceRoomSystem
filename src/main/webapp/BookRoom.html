@@ -1,102 +1,294 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Book a Room</title>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Room Requirements</title>
     <style>
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background-color: #f4f6f8;
-            padding: 2rem;
-            max-width: 600px;
-            margin: auto;
+      /* Internal CSS - Mobile Responsive */
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f9f9f9;
+      }
+      .navbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #005f73;
+        color: white;
+        padding: 10px 20px;
+      }
+      .navbar h1 {
+        margin: 0;
+        font-size: 20px;
+      }
+      .navbar-buttons {
+        display: flex;
+        gap: 10px;
+      }
+      .navbar-buttons button {
+        background-color: #0a9396;
+        border: none;
+        color: white;
+        padding: 8px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 14px;
+      }
+      .navbar-buttons button:hover {
+        background-color: #94d2bd;
+        color: black;
+      }
+
+      .form-container,
+      .room-container {
+        max-width: 600px;
+        margin: 20px auto;
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+      }
+      input,
+      select,
+      button {
+        width: 100%;
+        padding: 10px;
+        margin: 8px 0;
+        box-sizing: border-box;
+        border-radius: 5px;
+      }
+      label.checkbox-label {
+        display: flex;
+        align-items: center;
+        margin-bottom: 8px;
+      }
+      label.checkbox-label input {
+        width: auto;
+        margin-right: 8px;
+      }
+      .room-card {
+        background: #eef;
+        padding: 15px;
+        margin: 10px 0;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background 0.3s;
+      }
+      .room-card:hover {
+        background: #dde;
+      }
+      @media (max-width: 480px) {
+        .navbar {
+          flex-direction: column;
+          align-items: flex-start;
         }
-        h2 {
-            color: #333;
-            text-align: center;
+        .navbar-buttons {
+          width: 100%;
+          margin-top: 10px;
+          justify-content: flex-start;
         }
-        form {
-            background: white;
-            padding: 2rem;
-            border-radius: 12px;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+        .form-container,
+        .room-container {
+          margin: 10px;
+          padding: 15px;
         }
-        label {
-            display: block;
-            margin-top: 1rem;
-            font-weight: 600;
+      }
+
+      /* last added room card */
+      #rooms {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+        justify-content: center;
+        margin-top: 20px;
+      }
+
+      .room-card {
+        background-color: #f9f9f9;
+        border: 1px solid #ccc;
+        border-radius: 12px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        padding: 16px;
+        width: 280px;
+        cursor: pointer;
+        transition: transform 0.2s, box-shadow 0.2s;
+        text-align: left;
+      }
+
+      .room-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        background-color: #eef6ff;
+      }
+
+      .room-card strong {
+        font-size: 18px;
+        color: #333;
+      }
+
+      .room-card div {
+        margin-top: 8px;
+        font-size: 14px;
+        color: #555;
+      }
+
+      /* Make sure it's responsive */
+      @media (max-width: 480px) {
+        .room-card {
+          width: 90%;
         }
-        input, select, textarea {
-            width: 100%;
-            padding: 0.6rem;
-            margin-top: 0.4rem;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-        }
-        button {
-            margin-top: 1.5rem;
-            padding: 0.8rem;
-            width: 100%;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
+      }
     </style>
-</head>
-<body>
-<h2>Book a Conference Room</h2>
-<form action="/protected/book-room" method="POST">
-    <label for="roomId">Select Room</label>
-    <select name="roomId" id="roomId" required>
-        <!-- Options will be populated by JavaScript -->
-        <option value="1">Matoshri</option>
-        <option value="2">FC 17</option>
-    </select>
+  </head>
+  <body>
+    <!-- Navbar -->
+    <div class="navbar">
+      <h1>Room Booking</h1>
+      <div class="navbar-buttons">
+        <button onclick="goHome()">Home</button>
+        <button onclick="logout()">Logout</button>
+      </div>
+    </div>
 
-    <label for="startTime">Start Time</label>
-    <input type="datetime-local" name="startTime" id="startTime" required>
+    <div class="form-container" id="requirementForm">
+      <h2>Find a Room</h2>
 
-    <label for="endTime">End Time</label>
-    <input type="datetime-local" name="endTime" id="endTime" required>
+      <label>Capacity</label>
+      <input
+        type="number"
+        id="capacity"
+        placeholder="Enter required capacity"
+      />
 
-    <label for="purpose">Purpose</label>
-    <textarea name="purpose" id="purpose" rows="3" placeholder="Meeting agenda or purpose" required></textarea>
+      <h3>Select Equipment</h3>
+      <div id="equipmentList">
+        <label class="checkbox-label">
+          <input type="checkbox" value="1" /> Whiteboard
+        </label>
+        <label class="checkbox-label">
+          <input type="checkbox" value="2" /> Digital Screen
+        </label>
+        <label class="checkbox-label">
+          <input type="checkbox" value="3" /> Projector
+        </label>
+        <label class="checkbox-label">
+          <input type="checkbox" value="4" /> Conference Speaker
+        </label>
+        <label class="checkbox-label">
+          <input type="checkbox" value="5" /> AC
+        </label>
+      </div>
 
-    <button type="submit">Book Room</button>
-</form>
+      <button onclick="searchRooms()">Search Rooms</button>
+    </div>
 
-<script>
-    // Ensure the DOM is loaded before fetch
-    document.addEventListener("DOMContentLoaded", function () {
-        const select = document.getElementById("roomId");
+    <div class="room-container" id="roomList" style="display: none">
+      <h2>Available Rooms</h2>
+      <div id="rooms"></div>
+    </div>
 
-        fetch('/rooms')
-            .then(response => {
-                if (!response.ok) throw new Error("Failed to fetch rooms");
-                return response.json();
-            })
-            .then(data => {
-                // Clear default options
-                select.innerHTML = '';
+    <script>
+      // Check Session
+      fetch("/session").then((res) => {
+        if (res.status === 401) {
+          document.body.innerHTML =
+            "<h2>User not logged in. Redirecting to login...</h2>";
+          setTimeout(() => (window.location.href = "/login.html"), 3000);
+        }
+      });
 
-                data.forEach(room => {
-                    const option = document.createElement("option");
-                    option.value = room.id;
-                    option.text = `${room.name} (Capacity: ${room.capacity})`;
-                    select.appendChild(option);
-                });
-            })
-            .catch(error => {
-                console.error("Error loading rooms:", error);
-            });
+      function searchRooms() {
+        // const formData = new URLSearchParams();
+        // formData.append("roomId", selectedRoom.id);
+        // formData.append(
+        //   "startTime",
+        //   document.getElementById("startTime").value
+        // );
+        // formData.append("endTime", document.getElementById("endTime").value);
+
+        // fetch("/protected/bookRoom", {
+        //   method: "POST",
+        //   headers: {
+        //     "Content-Type": "application/x-www-form-urlencoded",
+        //   },
+        //   body: formData.toString(),
+        // })
+
+        const capacity = document.getElementById("capacity").value;
+        const selectedEquipments = [
+          ...document.querySelectorAll("#equipmentList input:checked"),
+        ].map((e) => parseInt(e.value));
+        const formData = new FormData();
+        formData.append("capacity", capacity);
+        selectedEquipments.forEach((id) => formData.append("equipment", id));
+
+        fetch("/protected/searchRooms", {
+          method: "POST",
+          body: formData,
+        })
+        .then((response) => response.json())
+        .then((data) => {
+    document.getElementById("roomList").style.display = "block";
+    const roomsDiv = document.getElementById("rooms");
+    roomsDiv.innerHTML = "";
+
+    data.forEach((room) => {
+        const div = document.createElement("div");
+        div.className = "room-card";
+
+        let occupiedHtml = "None";
+        if (room.occupiedSlots.length > 0) {
+            occupiedHtml = room.occupiedSlots.map(slot => {
+                const startDateTime = new Date(slot.start);
+                const endDateTime = new Date(slot.end);
+
+                const options = { year: 'numeric', month: 'short', day: 'numeric' };
+                const startDate = startDateTime.toLocaleDateString('en-GB', options);
+                const startTime = startDateTime.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+
+                const endDate = endDateTime.toLocaleDateString('en-GB', options);
+                const endTime = endDateTime.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+
+                return `
+                    <div style="margin-top:5px;">
+                        <span>Start: 📅 ${startDate} 🕒 ${startTime}</span><br>
+                        <span>End: 📅 ${endDate} 🕒 ${endTime}</span>
+                    </div>
+                `;
+            }).join("<hr style='border: 0.5px solid #ddd;'>");
+        }
+
+        div.innerHTML = `
+            <strong>${room.name}</strong><br>
+            Location: ${room.location}<br>
+            Capacity: ${room.capacity}<br>
+            <div style="margin-top:10px;">
+                <strong>Occupied Slots:</strong><br>${occupiedHtml}
+            </div>
+        `;
+
+        div.onclick = () => {
+            sessionStorage.setItem("selectedRoom", JSON.stringify(room));
+            window.location.href = "/ConfirmBooking.html";
+        };
+
+        roomsDiv.appendChild(div);
     });
-</script>
+});
 
-</body>
+      }
+
+      function goHome() {
+        window.location.href = "/protected/home.html";
+      }
+
+      function logout() {
+        fetch("/logout", { method: "POST" }).then(
+          () => (window.location.href = "/login.html")
+        );
+      }
+    </script>
+  </body>
 </html>

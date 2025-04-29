@@ -2,10 +2,16 @@ package com.hackmech.dao;
 import com.hackmech.model.Room;
 
 import com.hackmech.util.HibernateUtil;
-import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.query.NativeQuery;
+import org.hibernate.query.Query;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class RoomDao {
 
@@ -75,5 +81,46 @@ public class RoomDao {
             session.close();
             return rooms;
         }
+    }
+
+
+    public Map<Room, List<Map<String, LocalDateTime>>> findAvailableRoomsWithOccupiedSlots(int capacity, List<Integer> equipmentIds) {
+        Map<Room, List<Map<String, LocalDateTime>>> result = new HashMap<>();
+
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+
+            // Step 1: Find matching rooms
+            String sql = "SELECT DISTINCT r.* FROM rooms r " +
+                    "JOIN room_equipment re ON r.id = re.room_id " +
+                    "WHERE r.capacity >= :capacity " +
+                    "AND re.equipment_id IN (:equipmentIds)";
+
+            Query query = session.createNativeQuery(sql, Room.class);
+            query.setParameter("capacity", capacity);
+            query.setParameterList("equipmentIds", equipmentIds);
+
+
+            List<Room> rooms = query.list();
+
+            // Step 2: For each room, find occupied slots
+            for (Room room : rooms) {
+                String bookingSql = "SELECT start_time, end_time FROM booking WHERE room_id = ?";
+                NativeQuery<Object[]> bookingQuery = session.createNativeQuery(bookingSql);
+                bookingQuery.setParameter(1, room.getId());
+
+                List<Object[]> bookings = bookingQuery.list();
+                List<Map<String, LocalDateTime>> occupiedSlots = new ArrayList<>();
+
+                for (Object[] booking : bookings) {
+                    Map<String, LocalDateTime> slot = new HashMap<>();
+                    slot.put("start", ((java.sql.Timestamp) booking[0]).toLocalDateTime());
+                    slot.put("end", ((java.sql.Timestamp) booking[1]).toLocalDateTime());
+                    occupiedSlots.add(slot);
+                }
+
+                result.put(room, occupiedSlots);
+            }
+        }
+        return result;
     }
 }

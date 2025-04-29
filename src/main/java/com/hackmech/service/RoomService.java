@@ -5,8 +5,10 @@ import com.hackmech.dao.RoomDao;
 import com.hackmech.model.Equipment;
 import com.hackmech.model.Room;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class RoomService {
@@ -46,5 +48,9 @@ public class RoomService {
 
     public boolean deleteRoom(int id) {
         return roomDao.deleteRoom(id);
+    }
+
+    public Map<Room, List<Map<String, LocalDateTime>>> findAvailableRoomsWithSlots(int capacity, List<Integer> equipmentIds) {
+        return roomDao.findAvailableRoomsWithOccupiedSlots(capacity, equipmentIds);
     }
 }
