@@ -79,9 +79,54 @@
         margin-top: 10px;
         text-align: center;
       }
+
+      .welcome-heading {
+    position: absolute;
+    top: 40px;
+    width: 100%;
+    text-align: center;
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #2c3e50;
+    animation: fadeSlide 2s ease-out forwards;
+    opacity: 0;
+  }
+
+  @keyframes fadeSlide {
+    0% {
+      opacity: 0;
+      transform: translateY(-30px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .footer {
+    position: absolute;
+    bottom: 20px;
+    width: 100%;
+    text-align: center;
+    color: #555;
+    font-size: 0.95rem;
+    animation: fadeInUp 2s ease-in-out forwards;
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(15px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
     </style>
   </head>
   <body>
+    <h1 class="welcome-heading">Welcome to Conference Room Booking System</h1>
     <div class="login-container">
       <h2>Login</h2>
       <form id="loginForm" action="/user/login" method="POST">
@@ -123,6 +168,7 @@
         >
       </div>
     </div>
+    <div class="footer">Made with ❤️ by Arjun Patel</div>
 
     <script>
       document.addEventListener("DOMContentLoaded", function () {

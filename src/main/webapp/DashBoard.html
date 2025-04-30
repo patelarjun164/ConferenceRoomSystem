@@ -1,203 +1,303 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>Dashboard</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        /* Reset some default styles */
-        * {
-          margin: 0;
-          padding: 0;
-          box-sizing: border-box;
-        }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
-        body {
-          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-          background-color: #f5f7fa;
-          min-height: 100vh;
-          display: flex;
-          flex-direction: column;
-        }
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f0f2f5;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
 
-        /* Navbar */
+      .navbar {
+        background-color: #2c3e50;
+        padding: 1rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+      }
+
+      .navbar h1 {
+        color: white;
+        font-size: 1.5rem;
+      }
+
+      .logout-button {
+        background-color: #e74c3c;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        padding: 10px 18px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+
+      .logout-button:hover {
+        background-color: #c0392b;
+      }
+
+      .section-title {
+        margin-top: 1.5rem;
+        font-size: 1.3rem;
+        font-weight: bold;
+        color: #2c3e50;
+        border-left: 4px solid #3498db;
+        padding-left: 0.5rem;
+      }
+
+      .dashboard {
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+      }
+
+      .card-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        gap: 1rem;
+      }
+
+      .card {
+        background: white;
+        padding: 1rem;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        text-align: center;
+        transition: transform 0.3s, box-shadow 0.3s;
+        cursor: pointer;
+      }
+
+      .card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+      }
+
+      .card-icon {
+        width: 32px;
+        height: 32px;
+        color: #3498db;
+        margin: 0 auto 0.5rem auto;
+      }
+
+      .card h2 {
+        font-size: 1rem;
+        color: #333;
+      }
+
+      .loader {
+        text-align: center;
+        margin-top: 4rem;
+        font-size: 1.2rem;
+        color: #555;
+      }
+
+      @media (max-width: 600px) {
         .navbar {
-          background-color: #2c3e50;
-          padding: 1rem 2rem;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          position: sticky;
-          top: 0;
-          z-index: 1000;
-        }
-
-        .navbar h1 {
-          color: white;
-          font-size: 1.5rem;
+          flex-direction: column;
+          align-items: flex-start;
         }
 
         .logout-button {
-          background-color: #e74c3c;
-          color: white;
-          border: none;
-          border-radius: 6px;
-          padding: 10px 18px;
-          font-size: 1rem;
-          cursor: pointer;
-          transition: background-color 0.3s ease;
+          margin-top: 10px;
+          width: 100%;
+          text-align: center;
         }
 
-        .logout-button:hover {
-          background-color: #c0392b;
-        }
-
-        /* Dashboard Container */
-        .dashboard {
-          padding: 2rem;
-          flex-grow: 1;
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-          gap: 1.5rem;
+        .section-title {
+          font-size: 1.1rem;
         }
 
         .card {
-          background: white;
-          padding: 1.5rem;
-          border-radius: 12px;
-          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+          padding: 0.8rem;
+        }
+      }
+
+      .desktop-only {
+        display: inline-block;
+      }
+
+      .mobile-only {
+        display: none;
+      }
+
+      /* Adjust for mobile screens */
+      @media (max-width: 480px) {
+        .desktop-only {
+          display: none;
+        }
+
+        .mobile-only {
+          display: block;
+          padding: 1rem;
           text-align: center;
-          transition: transform 0.3s, box-shadow 0.3s;
-          cursor: pointer;
         }
 
-        .card:hover {
-          transform: translateY(-5px);
-          box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+        .mobile-logout-container .logout-button {
+          width: 100%;
+          margin-top: 1rem;
         }
-
-        .card h2 {
-          font-size: 1.2rem;
-          color: #333;
-          margin-bottom: 0.5rem;
-        }
-
-        /* Responsive tweaks */
-        @media (max-width: 600px) {
-          .navbar {
-            flex-direction: column;
-            align-items: flex-start;
-          }
-          .logout-button {
-            margin-top: 10px;
-            width: 100%;
-            text-align: center;
-          }
-        }
-
-        /* Loader while session fetch */
-        .loader {
-          text-align: center;
-          margin-top: 4rem;
-          font-size: 1.2rem;
-          color: #555;
-        }
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
+    <div class="navbar">
+      <h1>Dashboard</h1>
+      <button class="logout-button desktop-only" onclick="logout()">Logout</button>
+    </div>
 
-<!-- Navbar -->
-<div class="navbar">
-    <h1>Dashboard</h1>
-    <button class="logout-button" onclick="logout()">Logout</button>
-</div>
+    <div id="dashboardContent" class="dashboard">
+      <div class="loader">Loading your dashboard...</div>
+    </div>
 
-<!-- Dashboard Activities -->
-<div id="dashboardContent" class="dashboard">
-    <div class="loader">Loading your dashboard...</div>
-</div>
+    <div class="mobile-logout-container mobile-only">
+      <button class="logout-button" onclick="logout()">Logout</button>
+    </div>
 
-<script>
-    async function fetchSessionAndLoadDashboard() {
+    <script>
+      async function fetchSessionAndLoadDashboard() {
         try {
-            const response = await fetch('/session');
-            if (!response.ok) {
-                throw new Error('Session fetch failed');
-            }
-            const session = await response.json();
-            const role = session.role;
-            const dashboard = document.getElementById('dashboardContent');
-            dashboard.innerHTML = ''; // clear loader
+          const response = await fetch("/session");
+          if (!response.ok) throw new Error("Session fetch failed");
 
-            if (role === 'ADMIN') {
-                // Admin activities
-                const adminActivities = [
-                    { title: "Add Room", link: "/AddRoom.html" },
-                    { title: "Delete Room", link: "/DeleteRoom.html" },
-                    { title: "Update Room", link: "/admin/update-room" },
-                    { title: "Display/Update Users", link: "/AllUsers.html" },
-                    // Add more here easily later
-                ];
+          const session = await response.json();
+          const role = session.role;
+          const dashboard = document.getElementById("dashboardContent");
+          dashboard.innerHTML = ""; // clear loader
 
-                adminActivities.forEach(activity => {
-                    const card = createCard(activity.title, activity.link);
-                    dashboard.appendChild(card);
-                });
+          if (role === "ADMIN") {
+            const adminSection = document.createElement("div");
+            adminSection.innerHTML = `<div class="section-title">Admin Section</div>`;
+            const adminContainer = document.createElement("div");
+            adminContainer.className = "card-container";
 
-            }
-                // Employee activities
-                const employeeActivities = [
-                    { title: "Book Room", link: "/BookRoom.html" },
-                    { title: "Update Booking", link: "/BookingUpdate.html" },
-                    { title: "Delete Booking", link: "/DeleteBooking.html" },
-                    { title: "Your Bookings", link: "/UserBookings.html" }
-                    // Add more here easily later
-                ];
+            const adminActivities = [
+              { title: "Add Room", link: "/AddRoom.html", icon: "plus-square" },
+              {
+                title: "Delete Room",
+                link: "/DeleteRoom.html",
+                icon: "trash-2",
+              },
+              // {
+              //   title: "Update Room",
+              //   link: "/admin/update-room",
+              //   icon: "edit",
+              // },
+              {
+                title: "Display/Update Users",
+                link: "/AllUsers.html",
+                icon: "users",
+              },
+            ];
 
-                employeeActivities.forEach(activity => {
-                    const card = createCard(activity.title, activity.link);
-                    dashboard.appendChild(card);
-                });
+            adminActivities.forEach((activity) => {
+              const card = createCard(
+                activity.title,
+                activity.link,
+                activity.icon
+              );
+              adminContainer.appendChild(card);
+            });
 
+            adminSection.appendChild(adminContainer);
+            dashboard.appendChild(adminSection);
+          }
+
+          const employeeSection = document.createElement("div");
+          employeeSection.innerHTML = `<div class="section-title">Employee Section</div>`;
+          const employeeContainer = document.createElement("div");
+          employeeContainer.className = "card-container";
+
+          const employeeActivities = [
+            {
+              title: "Book Room",
+              link: "/BookRoom.html",
+              icon: "calendar-plus",
+            },
+            {
+              title: "Update Booking",
+              link: "/BookingUpdate.html",
+              icon: "edit-3",
+            },
+            {
+              title: "Delete Booking",
+              link: "/DeleteBooking.html",
+              icon: "trash",
+            },
+            {
+              title: "Your Bookings",
+              link: "/UserBookings.html",
+              icon: "clipboard-list",
+            },
+          ];
+
+          employeeActivities.forEach((activity) => {
+            const card = createCard(
+              activity.title,
+              activity.link,
+              activity.icon
+            );
+            employeeContainer.appendChild(card);
+          });
+
+          employeeSection.appendChild(employeeContainer);
+          dashboard.appendChild(employeeSection);
+          lucide.createIcons(); // Load icons
         } catch (error) {
-            console.error(error);
-            document.getElementById('dashboardContent').innerHTML = `
-              <div style="text-align: center; margin-top: 2rem;">
-                <p style="font-size: 1.2rem; color: red;">Session expired or not logged in.</p>
-                <p>Redirecting to login page...</p>
-              </div>
-            `;
-            setTimeout(() => {
-                window.location.href = "/Login.html";
-            }, 3000);
+          console.error(error);
+          document.getElementById("dashboardContent").innerHTML = `
+        <div style="text-align: center; margin-top: 2rem;">
+          <p style="font-size: 1.2rem; color: red;">Session expired or not logged in.</p>
+          <p>Redirecting to login page...</p>
+        </div>
+      `;
+          setTimeout(() => {
+            window.location.href = "/Login.html";
+          }, 3000);
         }
-    }
+      }
 
-    function createCard(title, link) {
-        const card = document.createElement('div');
-        card.className = 'card';
-        card.innerHTML = `<h2>${title}</h2>`;
-        card.onclick = () => window.location.href = link;
+      function createCard(title, link, iconName) {
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = `
+      <div><i data-lucide="${iconName}" class="card-icon"></i></div>
+      <h2>${title}</h2>
+    `;
+        card.onclick = () => (window.location.href = link);
         return card;
-    }
+      }
 
-    async function logout() {
+      async function logout() {
         try {
-            const response = await fetch('/user/logout', { method: 'GET' });
-            if (response.ok) {
-                window.location.href = '/Login.html';
-            } else {
-                alert('Logout failed.');
-            }
+          const response = await fetch("/user/logout", { method: "GET" });
+          if (response.ok) {
+            window.location.href = "/Login.html";
+          } else {
+            alert("Logout failed.");
+          }
         } catch (error) {
-            console.error('Logout error', error);
-            alert('Logout error.');
+          console.error("Logout error", error);
+          alert("Logout error.");
         }
-    }
+      }
 
-    // Initial fetch
-    fetchSessionAndLoadDashboard();
-</script>
-
-</body>
+      fetchSessionAndLoadDashboard();
+    </script>
+  </body>
 </html>

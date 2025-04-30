@@ -36,18 +36,19 @@ public class UpdateBookingServlet extends HttpServlet {
                 return;
             }
 
+
             booking.setPurpose(purpose);
             booking.setStartTime(LocalDateTime.parse(startTimeStr));
             booking.setEndTime(LocalDateTime.parse(endTimeStr));
 
-            boolean success = bookingService.updateBooking(booking);
+            boolean success = bookingService.updateBooking(booking,LocalDateTime.parse(startTimeStr), LocalDateTime.parse(endTimeStr));
 
             resp.setContentType("text/plain");
             resp.setCharacterEncoding("UTF-8");
             if (success) {
                 resp.getWriter().write("Booking updated successfully!");
             } else {
-                resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                resp.setStatus(HttpServletResponse.SC_EXPECTATION_FAILED);
                 resp.getWriter().write("Failed to update booking.");
             }
 

@@ -41,6 +41,7 @@ public class BookingDao {
 
     public boolean isRoomAvailable(int roomId, LocalDateTime startTime, LocalDateTime endTime) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            System.out.println(roomId);
             String sql = "SELECT COUNT(*) FROM booking " +
                     "WHERE room_id = ? " +
                     "AND start_time < ? " +

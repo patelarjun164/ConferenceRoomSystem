@@ -36,7 +36,9 @@ public class BookingService {
         return bookingDAO.getBookingsByUserId(userId);
     }
 
-    public boolean updateBooking(Booking booking) {
+    public boolean updateBooking(Booking booking, LocalDateTime startTime, LocalDateTime endTime) {
+        boolean isAvailable = bookingDAO.isRoomAvailable(booking.getRoom().getId(), startTime, endTime);
+        if (!isAvailable) return false;
         return bookingDAO.updateBooking(booking);
     }
 

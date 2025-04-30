@@ -3,6 +3,7 @@ package com.hackmech.servlet;
 import com.hackmech.model.Room;
 import com.hackmech.service.RoomService;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -10,7 +11,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
+import java.util.Arrays;
 
+@MultipartConfig
 @WebServlet("/admin/room")
 public class RoomManagementServlet extends HttpServlet {
 
@@ -21,12 +24,6 @@ public class RoomManagementServlet extends HttpServlet {
             throws ServletException, IOException {
 
         HttpSession session = request.getSession(false);
-//        if (session == null || !"ADMIN".equals(session.getAttribute("role"))) {
-//            System.out.println("User is NOT ADMIN");
-//            response.getWriter().write("not admin!!");
-////            response.sendError(HttpServletResponse.SC_FORBIDDEN);
-//            return;
-//        }
 
         try {
             String name = request.getParameter("name");
@@ -34,36 +31,24 @@ public class RoomManagementServlet extends HttpServlet {
             int capacity = Integer.parseInt(request.getParameter("capacity"));
             String[] equipmentIds = request.getParameterValues("equipment");
 
-            Room room;
-            String roomIdStr = request.getParameter("roomId");
-
             System.out.println(name);
             System.out.println(location);
             System.out.println(capacity);
-            System.out.println(equipmentIds);
-            System.out.println(roomIdStr);
 
-            if (roomIdStr != null && !roomIdStr.isEmpty()) {
-                int roomId = Integer.parseInt(roomIdStr);
-                room = roomService.getRoomById(roomId);
-                if (room == null) {
-                    System.out.println("room not found!");
-                    response.getWriter().write("room not found!");
-//                    response.sendError(HttpServletResponse.SC_NOT_FOUND);
-                    return;
-                }
-            } else {
-                room = new Room();
-            }
-
+            Room room = new Room();
             room.setName(name);
             room.setLocation(location);
             room.setCapacity(capacity);
 
-            roomService.saveOrUpdateRoom(room, equipmentIds);
+            boolean isSaved = roomService.saveOrUpdateRoom(room, equipmentIds);
 
-            System.out.println("Room saved/updated successfully.");
-            response.getWriter().write("success");
+            if (isSaved) {
+                System.out.println("Room saved/updated successfully.");
+                response.setStatus(HttpServletResponse.SC_OK);
+                response.getWriter().write("success");
+            } else {
+                response.setStatus(HttpServletResponse.SC_EXPECTATION_FAILED);
+            }
         } catch (Exception e) {
             e.printStackTrace();
             response.getWriter().write("Error occurred: " + e.getMessage());

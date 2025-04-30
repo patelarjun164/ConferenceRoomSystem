@@ -12,28 +12,32 @@ import java.util.*;
 
 public class RoomDao {
 
-    public void saveRoom(Room room) {
+    public boolean saveRoom(Room room) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
             session.persist(room);
             transaction.commit();
+            return true;
         } catch (Exception e) {
             if (transaction != null) transaction.rollback();
             e.printStackTrace();
         }
+        return false;
     }
 
-    public void updateRoom(Room room) {
+    public boolean updateRoom(Room room) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
             session.merge(room);
             transaction.commit();
+            return true;
         } catch (Exception e) {
             if (transaction != null) transaction.rollback();
             e.printStackTrace();
         }
+        return false;
     }
 
     public boolean deleteRoom(int roomId) {
@@ -70,12 +74,13 @@ public class RoomDao {
 //            for (Room room : rooms) {
 //                Hibernate.initialize(room.getEquipment());
 //            }
-            System.out.println("into Room DAo getAllrooms sql");
-            for (Room room : rooms) {
-                System.out.println(room.getName());
-            }
+//            System.out.println("into Room DAo getAllrooms sql");
+//            for (Room room : rooms) {
+//                System.out.println(room.getName());
+//            }
 
             session.close();
+            Collections.reverse(rooms);
             return rooms;
         }
     }

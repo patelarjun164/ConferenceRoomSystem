@@ -12,6 +12,32 @@
             background-color: #f5f5f5;
         }
 
+        nav {
+            background-color: #2c3e50;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        nav .nav-buttons button {
+            background-color: #0a9396;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            margin-left: 20px;
+            border-radius: 4px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        nav .nav-buttons button:hover {
+            background-color: #94d2bd;
+        }
+
         .container {
             max-width: 1200px;
             margin: auto;
@@ -71,10 +97,30 @@
 </head>
 <body>
 
+<!-- Navbar -->
+<nav>
+    <!-- <div style="font-size: 1.2rem; font-weight: bold; color: white;">Your Bookings</div> -->
+    <div class="nav-buttons">
+        <button onclick="location.href='/DashBoard.html'">Dashboard</button>
+        <button onclick="logout()">Logout</button>
+    </div>
+</nav>
+
 <h1 style="text-align: center;">Your Bookings</h1>
 <div class="container" id="bookingsContainer"></div>
 
 <script>
+
+fetch("/session")
+        .then((res) => {
+          if (res.status === 401) {
+            document.body.innerHTML =
+              "<h2>User not logged in. Redirecting to login...</h2>";
+            setTimeout(() => (window.location.href = "/Login.html"), 3000);
+          }
+          return res.json();
+        });
+
     async function fetchBookings() {
         try {
             const response = await fetch("/protected/user/bookings");
@@ -115,6 +161,20 @@
     }
 
     fetchBookings();
+
+    async function logout() {
+        try {
+          const response = await fetch("/user/logout", { method: "GET" });
+          if (response.ok) {
+            window.location.href = "/Login.html";
+          } else {
+            alert("Logout failed.");
+          }
+        } catch (error) {
+          console.error("Logout error", error);
+          alert("Logout error.");
+        }
+      }
 </script>
 </body>
 </html>

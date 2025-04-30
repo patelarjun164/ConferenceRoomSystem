@@ -15,7 +15,7 @@ public class RoomService {
     private final RoomDao roomDao = new RoomDao();
     private final EquipmentDao equipmentDao = new EquipmentDao();
 
-    public void saveOrUpdateRoom(Room room, String[] equipmentIds) {
+    public boolean saveOrUpdateRoom(Room room, String[] equipmentIds) {
         Set<Equipment> equipmentSet = new HashSet<>();
         if (equipmentIds != null) {
             for (String eqIdStr : equipmentIds) {
@@ -32,9 +32,9 @@ public class RoomService {
         room.setEquipment(equipmentSet);
 
         if (room.getId() == 0) {
-            roomDao.saveRoom(room);
+            return roomDao.saveRoom(room);
         } else {
-            roomDao.updateRoom(room);
+            return roomDao.updateRoom(room);
         }
     }
 
