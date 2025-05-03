@@ -73,7 +73,7 @@ public class BookingDao {
 
     public List<Booking> getBookingsByUserId(int userId) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            String sql = "SELECT * FROM Booking WHERE user_id = ?";
+            String sql = "SELECT * FROM booking WHERE user_id = ?";
             Query<Booking> query = session.createNativeQuery(sql, Booking.class);
             query.setParameter(1, userId);
             List<Booking> bookings = query.getResultList();
