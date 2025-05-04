@@ -9,7 +9,7 @@ RUN mvn dependency:go-offline
 
 # Copy the entire source and build
 COPY src ./src
-RUN mvn clean package
+RUN mvn -e clean package
 
 # Deploy stage
 FROM tomcat:9.0-jdk17
