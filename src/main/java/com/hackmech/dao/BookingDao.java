@@ -57,6 +57,26 @@ public class BookingDao {
         }
     }
 
+    public boolean isRoomAvailableUpdate(Booking booking, LocalDateTime startTime, LocalDateTime endTime) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            System.out.println(booking.getRoom().getId());
+            String sql = "SELECT COUNT(*) FROM booking " +
+                    "WHERE room_id = ? " +
+                    "AND id != ? " +
+                    "AND start_time < ? " +
+                    "AND end_time > ?";
+
+            NativeQuery<?> query = session.createNativeQuery(sql);
+            query.setParameter(1, booking.getRoom().getId());
+            query.setParameter(2, booking.getId());
+            query.setParameter(3, endTime);
+            query.setParameter(4, startTime);
+
+            Number count = (Number) query.getSingleResult();
+            return count.intValue() == 0; // True if no overlapping
+        }
+    }
+
     public boolean saveBooking(Booking booking) {
         Transaction tx = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
@@ -73,7 +93,7 @@ public class BookingDao {
 
     public List<Booking> getBookingsByUserId(int userId) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            String sql = "SELECT * FROM booking WHERE user_id = ?";
+            String sql = "SELECT * FROM booking WHERE user_id = ? and room_id is not null";
             Query<Booking> query = session.createNativeQuery(sql, Booking.class);
             query.setParameter(1, userId);
             List<Booking> bookings = query.getResultList();

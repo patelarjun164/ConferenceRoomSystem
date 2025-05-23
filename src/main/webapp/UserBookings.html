@@ -131,7 +131,10 @@ fetch("/session")
 
             bookings.forEach(booking => {
                 const room = booking.room;
+                console.log(room);
+                
                 const user = booking.user;
+                // console.log(user);
                 const card = document.createElement("div");
                 card.className = "card";
 
