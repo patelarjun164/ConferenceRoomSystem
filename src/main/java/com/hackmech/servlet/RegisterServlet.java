@@ -25,7 +25,7 @@ public class RegisterServlet extends HttpServlet {
         String email = req.getParameter("email");
         String password = req.getParameter("password");
 
-        User user = new User(name, email, password, "EMPLOYEE");
+        User user = new User(name, email, password, "ADMIN");
 
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             UserService service = new UserService();

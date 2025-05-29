@@ -1,7 +1,6 @@
 package com.hackmech.dao;
 
 import com.hackmech.model.Booking;
-import com.hackmech.model.Room;
 import com.hackmech.util.HibernateUtil;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -53,7 +52,7 @@ public class BookingDao {
             query.setParameter(3, startTime);
 
             Number count = (Number) query.getSingleResult();
-            return count.intValue() == 0; // True if no overlapping
+            return count.intValue() == 0;
         }
     }
 
